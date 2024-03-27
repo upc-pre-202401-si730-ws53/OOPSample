@@ -39,4 +39,6 @@ public class SalesOrderItem
     {
         return Guid.NewGuid();
     }
+
+    public double CalculateItemPrice() => Quantity*UnitPrice;
 }
