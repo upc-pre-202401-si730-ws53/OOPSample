@@ -46,5 +46,12 @@ public class SalesOrder(int customerId)
             throw new InvalidOperationException("Amount must be less than or equal to the total price.");
         
         PaidAmount += amount;
+        VerifyIfReadyForShipment();
+    }
+
+    private void VerifyIfReadyForShipment()
+    {
+        if (PaidAmount == CalculateTotalPrice())
+            Status = SalesOrderStatus.ReadyForShipment;
     }
 }
