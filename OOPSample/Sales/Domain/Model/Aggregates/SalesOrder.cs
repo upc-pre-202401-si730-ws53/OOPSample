@@ -7,10 +7,15 @@ public class SalesOrder(int customerId)
     public Guid Id { get; } = Guid.NewGuid();
     public int CustomerId { get; } = customerId;
     public SalesOrderStatus Status { get; private set; } = SalesOrderStatus.PendingPayment;
-    public Address ShippingAddress { get; private set; }
+    private Address _shippingAddress;
+
+    public string ShippingAddress => _shippingAddress.AddressAsString;
+
+
     public double PaidAmount { get; private set; } = 0;
     private readonly List<SalesOrderItem> _items = [];
 
+    public double TotalPrice => CalculateTotalPrice();
     public void AddItem(int productId, int quantity, double unitPrice)
     {
         if (Status != SalesOrderStatus.PendingPayment)
@@ -31,11 +36,11 @@ public class SalesOrder(int customerId)
         if (_items.Count == 0)
             throw new InvalidOperationException("Can't dispatch and order without items.");
         
-        ShippingAddress = new Address(street, city, state, zipCode, country);
+        _shippingAddress = new Address(street, city, state, zipCode, country);
         Status = SalesOrderStatus.Shipped;
     }
 
-    public double CalculateTotalPrice() => _items.Sum(item => item.CalculateItemPrice());
+    private double CalculateTotalPrice() => _items.Sum(item => item.CalculateItemPrice());
 
     public void AddPayment(double amount)
     {
